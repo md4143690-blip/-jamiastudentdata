@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="bn" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ছাত্র ব্যবস্থাপনা - প্রো এডিট সংস্করণ</title>
+    <title>জামিয়া ছাত্র ডাটাবেস</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,201 +18,198 @@
             --text: #f8fafc;
             --text-dim: #94a3b8;
             --primary: #6366f1;
-            --primary-hover: #4f46e5;
             --danger: #ef4444;
             --success: #10b981;
         }
 
         :root[data-theme="light"] {
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card: #ffffff;
-            --border: rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.08);
             --text: #0f172a;
             --text-dim: #64748b;
             --primary: #4f46e5;
-            --primary-hover: #4338ca;
             --danger: #dc2626;
             --success: #059669;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Bengali', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; }
 
-        header { padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.2rem; color: var(--primary); }
+        header { 
+            padding: 0.8rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--card); 
+            border-bottom: 1px solid var(--border); 
+            position: sticky; top: 0; z-index: 100;
+        }
 
-        main { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
 
-        .search-area { position: relative; margin-bottom: 1.5rem; }
-        .search-area input { width: 100%; padding: 0.8rem 1rem 0.8rem 3rem; background: var(--card); border: 2px solid var(--border); border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; transition: 0.3s; }
-        .search-area input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        .search-area i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+        .search-box { position: relative; width: 220px; }
+        .search-box input { 
+            width: 100%; padding: 0.5rem 0.8rem 0.5rem 2.2rem; 
+            border-radius: 20px; border: 1px solid var(--border); 
+            background: rgba(0,0,0,0.05); color: var(--text); outline: none;
+        }
+        .search-box i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; color: var(--text-dim); }
 
-        .profile-card { background: var(--card); border-radius: 1.5rem; padding: 1.5rem; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeInUp 0.4s ease-out; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-icon { background: var(--border); border: none; color: var(--text); padding: 8px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-        @media (min-width: 768px) { .grid-layout { grid-template-columns: 1.6fr 1fr; } }
-
-        .info-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.8rem; margin-top: 1rem; }
-        .info-tag { background: rgba(0,0,0,0.05); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border); position: relative; transition: 0.2s; }
-        .info-tag:hover { background: rgba(99, 102, 241, 0.05); }
-        .info-label { font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .info-val { font-weight: 600; font-size: 0.9rem; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 25px; }
+        main { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
         
-        .copy-icon-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim); opacity: 0.4; transition: 0.2s; background: none; border: none; padding: 4px; display: flex; align-items: center; }
-        .copy-icon-btn:hover { opacity: 1; color: var(--primary); }
+        .list-container { background: var(--card); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
+        
+        .student-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); 
+            cursor: pointer; transition: 0.2s;
+        }
+        .student-item:hover { background: rgba(99, 102, 241, 0.05); }
+        .student-item:last-child { border-bottom: none; }
+        
+        .student-name-box { display: flex; align-items: center; gap: 12px; }
+        .id-badge { background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .student-name { font-weight: 600; font-size: 1rem; }
 
-        .media-column { display: flex; flex-direction: column; gap: 1.2rem; }
-        .media-item { text-align: center; background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 15px; border: 1px solid var(--border); }
-        .media-frame { width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 0.8rem; border: 2px solid var(--primary); position: relative; }
-        .media-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-        .action-btns { display: flex; gap: 8px; margin-top: 8px; }
-        .btn { flex: 1; padding: 0.6rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-edit { background: var(--success); color: white; margin-top: 1rem; }
-        .btn-del { background: var(--danger); color: white; margin-top: 0.5rem; }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
         .modal.show { display: flex; }
-        .modal-body { background: var(--card); width: 100%; max-width: 600px; border-radius: 20px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); position: relative; }
+        .modal-content { background: var(--card); width: 100%; max-width: 550px; border-radius: 20px; padding: 2rem; position: relative; border: 1px solid var(--border); max-height: 95vh; overflow-y: auto; }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+        .profile-header { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .photo-box { text-align: center; }
+        .photo-box span { font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 5px; }
+        .img-wrap { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 2px solid var(--primary); overflow: hidden; background: #fff; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-        .input-group { margin-bottom: 0.8rem; }
-        .input-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text-dim); }
-        .input-field { width: 100%; padding: 0.7rem; border-radius: 10px; border: 1.5px solid var(--border); background: rgba(0,0,0,0.1); color: var(--text); outline: none; transition: 0.2s; }
-        .input-field:focus { border-color: var(--primary); background: transparent; }
+        .info-grid { display: flex; flex-direction: column; gap: 10px; }
+        .info-card { 
+            background: rgba(0,0,0,0.03); padding: 10px 15px; border-radius: 10px; 
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+        }
+        .info-label { font-size: 0.75rem; color: var(--text-dim); font-weight: 500; }
+        .info-val { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+        .btn-copy { background: none; border: none; color: var(--primary); cursor: pointer; padding: 5px; opacity: 0.6; transition: 0.2s; }
+        .btn-copy:hover { opacity: 1; transform: scale(1.1); }
 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid var(--primary); display: flex; align-items: center; gap: 8px; }
+        .action-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn { padding: 0.8rem; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-edit { background: var(--success); color: white; }
+        .btn-del { background: var(--danger); color: white; }
+        .btn-save { background: var(--primary); color: white; width: 100%; margin-top: 15px; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
+        .input { width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.05); color: var(--text); outline: none; }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: white; padding: 12px 25px; border-radius: 30px; transition: 0.4s; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
-        .status-msg { text-align: center; padding: 4rem 1rem; color: var(--text-dim); }
-        .hidden { display: none !important; }
+        .fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 90; }
 
-        select.input-field { appearance: none; cursor: pointer; }
+        .close-modal { position: absolute; top: 15px; right: 15px; color: var(--text-dim); background: none; border: none; cursor: pointer; }
+        
+        .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
+    <div id="appLoader" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>সার্ভার থেকে তথ্য আসছে...</p>
+    </div>
+
     <header>
-        <div class="logo"><i data-lucide="users"></i> জামিয়া স্টুডেন্ট ডাটা</div>
-        <div style="display: flex; gap: 10px;">
-            <button onclick="openFormForNew()" class="btn btn-primary" style="padding: 0.6rem 1rem; border-radius: 12px;"><i data-lucide="plus-circle"></i> নতুন ছাত্র</button>
-            <button id="themeToggle" style="background:none; border: 1px solid var(--border); color:var(--text); width:40px; height:40px; border-radius:50%; cursor:pointer; display: flex; align-items: center; justify-content: center;"><i data-lucide="sun"></i></button>
+        <div class="logo" style="font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="graduation-cap"></i> জামিয়া ডাটাবেস
+        </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="searchInput" placeholder="খুঁজুন (নাম বা আইডি)...">
+            </div>
+            <button id="themeToggle" class="btn-icon"><i data-lucide="sun"></i></button>
         </div>
     </header>
 
     <main>
-        <div class="search-area">
-            <i data-lucide="search"></i>
-            <input type="text" id="searchInput" placeholder="ছাত্রের আইডি (যেমন: S101) দিয়ে সার্চ করুন..." autocomplete="off">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.1rem; opacity: 0.8;">ছাত্রদের তালিকা</h2>
+            <span id="count" style="font-size: 0.8rem; background: var(--border); padding: 2px 10px; border-radius: 10px;">০ জন</span>
         </div>
-
-        <div id="statusContainer">
-            <div id="msgEmpty" class="status-msg">
-                <i data-lucide="search" style="width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.2;"></i>
-                <p>ছাত্রের আইডি লিখে সার্চ করুন অথবা নতুন তথ্য যোগ করুন।</p>
-            </div>
-            <div id="msgLoading" class="status-msg hidden">
-                <div style="width: 30px; height: 30px; border: 3px solid var(--primary); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
-                <p>তথ্য খোঁজা হচ্ছে...</p>
-            </div>
-            <div id="msgError" class="status-msg hidden">
-                <i data-lucide="user-x" style="width: 48px; height: 48px; margin-bottom: 1rem; color: var(--danger); opacity: 0.5;"></i>
-                <p>এই আইডি দিয়ে কোনো ছাত্রের তথ্য পাওয়া যায়নি!</p>
-            </div>
-        </div>
-
-        <div id="profileContainer" class="hidden"></div>
+        <div id="studentList" class="list-container"></div>
     </main>
 
-    <!-- Student Form Modal -->
-    <div class="modal" id="studentModal">
-        <div class="modal-body">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-                <h3 id="modalTitle">নতুন ছাত্র যোগ করুন</h3>
-                <button onclick="toggleModal(false)" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i data-lucide="x"></i></button>
-            </div>
+    <button class="fab" onclick="window.openForm()" title="নতুন ছাত্র যোগ করুন"><i data-lucide="plus" size="28"></i></button>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="window.closeModal('detailModal')"><i data-lucide="x"></i></button>
+            <div id="detailBody"></div>
+        </div>
+    </div>
+
+    <!-- Form Modal -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="window.closeModal('formModal')"><i data-lucide="x"></i></button>
+            <h3 id="formTitle" style="margin-bottom: 1.5rem;">নতুন ছাত্র যোগ করুন</h3>
             <form id="studentForm">
                 <input type="hidden" id="editMode" value="false">
-                
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>আইডি নম্বর*</label>
-                        <input type="text" id="fId" class="input-field" required placeholder="S101">
-                    </div>
-                    <div class="input-group">
-                        <label>ছাত্রের নাম*</label>
-                        <input type="text" id="fName" class="input-field" required placeholder="আব্দুল্লাহ">
-                    </div>
+                <div class="form-group">
+                    <label>নাম*</label>
+                    <input type="text" id="fName" class="input" required>
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>পিতার নাম*</label>
-                        <input type="text" id="fFather" class="input-field" required placeholder="পিতার নাম">
+                <div class="form-group">
+                    <label>পিতার নাম*</label>
+                    <input type="text" id="fFather" class="input" required>
+                </div>
+                <div class="form-group">
+                    <label>বিভাগ*</label>
+                    <input type="text" id="fDept" class="input" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>আইডি নং*</label>
+                        <input type="text" id="fId" class="input" required>
                     </div>
-                    <div class="input-group">
-                        <label>রক্তের গ্রুপ (Blood Group)</label>
-                        <select id="fBlood" class="input-field">
+                    <div class="form-group">
+                        <label>রক্তের গ্রুপ</label>
+                        <select id="fBlood" class="input">
                             <option value="জানা নেই">নির্বাচন করুন</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
+                            <option value="A+">A+</option><option value="A-">A-</option>
+                            <option value="B+">B+</option><option value="B-">B-</option>
+                            <option value="O+">O+</option><option value="O-">O-</option>
+                            <option value="AB+">AB+</option><option value="AB-">AB-</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>বিভাগ*</label>
-                        <input type="text" id="fDept" class="input-field" required placeholder="হিফজ/নাহবেমীর">
-                    </div>
-                    <div class="input-group">
-                        <label>মোবাইল নম্বর*</label>
-                        <input type="tel" id="fMobile" class="input-field" required placeholder="017XXXXXXXX">
-                    </div>
+                <div class="form-group">
+                    <label>মোবাইল নং*</label>
+                    <input type="tel" id="fMobile" class="input" required>
                 </div>
-
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>ছাত্রের ছবি (High Res)</label>
-                        <input type="file" id="fPhoto" class="input-field" accept="image/*">
-                    </div>
-                    <div class="input-group">
-                        <label>QR কোড ছবি</label>
-                        <input type="file" id="fQr" class="input-field" accept="image/*">
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group"><label>ছাত্রের ছবি</label><input type="file" id="fPhoto" class="input" accept="image/*"></div>
+                    <div class="form-group"><label>QR কোড</label><input type="file" id="fQr" class="input" accept="image/*"></div>
                 </div>
-
-                <p id="editNote" class="hidden" style="color: var(--success); font-size: 0.8rem; margin-bottom: 10px; font-weight: 600;">* আপনি এখন বিদ্যমান তথ্য এডিট করছেন। ছবি না বদলালে ফাইল সিলেক্ট করার প্রয়োজন নেই।</p>
-                
-                <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 0.9rem; margin-top: 0.5rem; font-size: 1rem;">তথ্য সেভ করুন</button>
+                <button type="submit" id="saveBtn" class="btn btn-save">তথ্য সেভ করুন</button>
             </form>
         </div>
     </div>
 
-    <div id="toast">
-        <i data-lucide="check-circle" size="18"></i>
-        <span id="toastText">সাফল্য!</span>
-    </div>
-
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+    <div id="toast">সাফল্য!</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBuaUX20xEpopWvMQSEaxOqsHQwFs7y2SM",
@@ -219,297 +217,200 @@
             projectId: "jamiastudentdata",
             storageBucket: "jamiastudentdata.firebasestorage.app",
             messagingSenderId: "197739340410",
-            appId: "1:197739340410:web:de12fd5f0d6162552ad1c3",
-            measurementId: "G-M3RQ4FQY8Q"
+            appId: "1:197739340410:web:de12fd5f0d6162552ad1c3"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = 'jamia-student-db-v3';
+        const colPath = `artifacts/jamia-final-system/public/data/students`;
 
-        let user = null;
-        let currentStudentData = null; // To store data for editing
+        let students = [];
         lucide.createIcons();
 
-        // Auth
-        signInAnonymously(auth).catch(e => console.error("Firebase Auth Error", e));
-        onAuthStateChanged(auth, u => user = u);
-
-        // UI Controllers
-        window.toggleModal = (show) => {
-            const modal = document.getElementById('studentModal');
-            modal.classList.toggle('show', show);
-            if (!show) {
-                document.getElementById('studentForm').reset();
-                document.getElementById('editMode').value = "false";
-                document.getElementById('fId').disabled = false;
-                document.getElementById('modalTitle').textContent = "নতুন ছাত্র যোগ করুন";
-                document.getElementById('editNote').classList.add('hidden');
-            }
-        };
-
-        window.openFormForNew = () => toggleModal(true);
-
-        window.showToast = (msg, isError = false) => {
-            const t = document.getElementById('toast');
-            document.getElementById('toastText').textContent = msg;
-            t.style.borderColor = isError ? 'var(--danger)' : 'var(--primary)';
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        };
-
-        window.copyToClipboard = (text) => {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showToast("কপি করা হয়েছে!");
-        };
-
-        // Image Processing (High-Res 1200px)
-        const processImage = (file) => new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1200;
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.85)); // 85% quality for high res
-                };
-            };
-        });
-
-        // FORM SUBMIT (Create & Update)
-        document.getElementById('studentForm').onsubmit = async (e) => {
-            e.preventDefault();
-            if (!user) return showToast("সার্ভারে কানেক্ট করা যাচ্ছে না।", true);
-
-            const btn = document.getElementById('submitBtn');
-            const isEdit = document.getElementById('editMode').value === "true";
-            btn.disabled = true;
-            btn.textContent = isEdit ? "আপডেট হচ্ছে..." : "সেভ হচ্ছে...";
-
-            const id = document.getElementById('fId').value.trim().toUpperCase();
-            const photoFile = document.getElementById('fPhoto').files[0];
-            const qrFile = document.getElementById('fQr').files[0];
-
-            try {
-                // If editing, use old images if new ones aren't selected
-                let photoData = isEdit ? currentStudentData.photo : null;
-                let qrData = isEdit ? currentStudentData.qr : null;
-
-                if (photoFile) photoData = await processImage(photoFile);
-                if (qrFile) qrData = await processImage(qrFile);
-
-                const studentObj = {
-                    id,
-                    name: document.getElementById('fName').value.trim(),
-                    father: document.getElementById('fFather').value.trim(),
-                    blood: document.getElementById('fBlood').value,
-                    dept: document.getElementById('fDept').value.trim(),
-                    mobile: document.getElementById('fMobile').value.trim(),
-                    photo: photoData,
-                    qr: qrData,
-                    updatedAt: Date.now()
-                };
-
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), studentObj);
-                
-                showToast(isEdit ? "তথ্য সফলভাবে আপডেট হয়েছে!" : "নতুন ছাত্র সফলভাবে যোগ হয়েছে!");
-                toggleModal(false);
-                
-                // Refresh search if on screen
-                if (id === document.getElementById('searchInput').value.trim().toUpperCase()) {
-                    performSearch(id);
-                }
-            } catch (err) {
-                console.error(err);
-                showToast("সেভ করতে সমস্যা হয়েছে!", true);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "তথ্য সেভ করুন";
-            }
-        };
-
-        // SEARCH
-        let searchTimer;
-        document.getElementById('searchInput').oninput = (e) => {
-            const val = e.target.value.trim().toUpperCase();
-            clearTimeout(searchTimer);
-            if (!val) { resetUI(); return; }
-            
-            document.getElementById('msgEmpty').classList.add('hidden');
-            document.getElementById('msgError').classList.add('hidden');
-            document.getElementById('msgLoading').classList.remove('hidden');
-            document.getElementById('profileContainer').classList.add('hidden');
-
-            searchTimer = setTimeout(() => performSearch(val), 600);
-        };
-
-        async function performSearch(id) {
-            try {
-                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-                document.getElementById('msgLoading').classList.add('hidden');
-                
-                if (snap.exists()) {
-                    currentStudentData = snap.data();
-                    renderProfile(currentStudentData);
-                } else {
-                    document.getElementById('msgError').classList.remove('hidden');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast("সার্চ এরর!", true);
-            }
+        async function init() {
+            await signInAnonymously(auth);
+            onSnapshot(collection(db, colPath), (snap) => {
+                students = snap.docs.map(d => d.data());
+                students.sort((a,b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+                document.getElementById('count').textContent = students.length + " জন";
+                document.getElementById('appLoader').classList.add('hidden');
+                render(students);
+            });
         }
+        init();
 
-        function renderProfile(s) {
-            const container = document.getElementById('profileContainer');
-            container.classList.remove('hidden');
-            
-            const photo = s.photo || `https://api.dicebear.com/7.x/initials/svg?seed=${s.name}`;
-            const qr = s.qr || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${s.id}`;
-
-            container.innerHTML = `
-                <div class="profile-card">
-                    <div class="grid-layout">
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                                <h2 style="color:var(--primary); font-size: 1.4rem;">ছাত্র প্রোফাইল</h2>
-                                <span style="font-size: 0.65rem; color: var(--text-dim); background: var(--border); padding: 2px 8px; border-radius: 5px;">ID: ${s.id}</span>
-                            </div>
-                            
-                            <div class="info-box">
-                                <div class="info-tag">
-                                    <span class="info-label">ছাত্রের নাম</span>
-                                    <span class="info-val">${s.name}</span>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${s.name}')"><i data-lucide="copy" size="12"></i></button>
-                                </div>
-                                <div class="info-tag">
-                                    <span class="info-label">পিতার নাম</span>
-                                    <span class="info-val">${s.father}</span>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${s.father}')"><i data-lucide="copy" size="12"></i></button>
-                                </div>
-                                <div class="info-tag">
-                                    <span class="info-label">রক্তের গ্রুপ</span>
-                                    <span class="info-val" style="color:var(--danger)">${s.blood || 'জানা নেই'}</span>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${s.blood}')"><i data-lucide="copy" size="12"></i></button>
-                                </div>
-                                <div class="info-tag">
-                                    <span class="info-label">বিভাগ</span>
-                                    <span class="info-val">${s.dept}</span>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${s.dept}')"><i data-lucide="copy" size="12"></i></button>
-                                </div>
-                                <div class="info-tag" style="grid-column: 1/-1;">
-                                    <span class="info-label">মোবাইল নম্বর</span>
-                                    <span class="info-val">${s.mobile}</span>
-                                    <button class="copy-icon-btn" onclick="copyToClipboard('${s.mobile}')"><i data-lucide="copy" size="12"></i></button>
-                                </div>
-                            </div>
-
-                            <div style="margin-top: 15px;">
-                                <button class="btn btn-edit" onclick="startEdit()"><i data-lucide="edit-3"></i> তথ্য এডিট করুন</button>
-                                <button class="btn btn-del" onclick="deleteStudent('${s.id}')"><i data-lucide="trash-2"></i> তথ্য মুছে ফেলুন</button>
-                            </div>
-                        </div>
-
-                        <div class="media-column">
-                            <div class="media-item">
-                                <span class="info-label">ছাত্রের ছবি</span>
-                                <div class="media-frame"><img src="${photo}" loading="lazy"></div>
-                                <div class="action-btns">
-                                    <button class="btn btn-primary" onclick="downloadImg('${photo}', '${s.id}_photo')"><i data-lucide="download"></i> সেভ</button>
-                                </div>
-                            </div>
-                            <div class="media-item">
-                                <span class="info-label">QR কোড</span>
-                                <div class="media-frame" style="padding:10px; background:white;"><img src="${qr}" style="object-fit:contain"></div>
-                                <div class="action-btns">
-                                    <button class="btn btn-primary" onclick="downloadImg('${qr}', '${s.id}_qr')"><i data-lucide="download"></i> সেভ</button>
-                                </div>
-                            </div>
-                        </div>
+        function render(list) {
+            const container = document.getElementById('studentList');
+            if(list.length === 0) {
+                container.innerHTML = `<div style="padding: 3rem; text-align:center; opacity:0.5;">কোনো তথ্য নেই</div>`;
+                return;
+            }
+            container.innerHTML = list.map(s => `
+                <div class="student-item" onclick="window.viewStudent('${s.id}')">
+                    <div class="student-name-box">
+                        <div class="id-badge">${s.id}</div>
+                        <span class="student-name">${s.name}</span>
                     </div>
+                    <i data-lucide="chevron-right" size="18"></i>
                 </div>
-            `;
+            `).join('');
             lucide.createIcons();
         }
 
-        // EDIT LOGIC
-        window.startEdit = () => {
-            if (!currentStudentData) return;
-            
-            const s = currentStudentData;
-            document.getElementById('fId').value = s.id;
-            document.getElementById('fId').disabled = true; // Cannot change ID while editing
-            document.getElementById('fName').value = s.name;
-            document.getElementById('fFather').value = s.father;
-            document.getElementById('fBlood').value = s.blood || 'জানা নেই';
-            document.getElementById('fDept').value = s.dept;
-            document.getElementById('fMobile').value = s.mobile;
-            
-            document.getElementById('editMode').value = "true";
-            document.getElementById('modalTitle').textContent = "তথ্য এডিট করুন";
-            document.getElementById('editNote').classList.remove('hidden');
-            
-            toggleModal(true);
+        window.viewStudent = (id) => {
+            const s = students.find(x => x.id === id);
+            if(!s) return;
+            const body = document.getElementById('detailBody');
+            body.innerHTML = `
+                <div class="profile-header">
+                    <div class="photo-box">
+                        <span>ছাত্রের ছবি</span>
+                        <div class="img-wrap"><img src="${s.photo || 'https://api.dicebear.com/7.x/initials/svg?seed='+s.name}"></div>
+                        <button class="btn" style="background:#555; font-size:0.7rem; padding:4px; width:100%; margin-top:5px;" onclick="window.dl('${s.photo}', '${s.id}_img')">ডাউনলোড</button>
+                    </div>
+                    <div class="photo-box">
+                        <span>QR কোড</span>
+                        <div class="img-wrap" style="padding:8px"><img src="${s.qr || 'https://api.qrserver.com/v1/create-qr-code/?data='+s.id}" style="object-fit:contain"></div>
+                        <button class="btn" style="background:#555; font-size:0.7rem; padding:4px; width:100%; margin-top:5px;" onclick="window.dl('${s.qr}', '${s.id}_qr')">ডাউনলোড</button>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    ${infoRow("নাম", s.name)}
+                    ${infoRow("পিতার নাম", s.father)}
+                    ${infoRow("বিভাগ", s.dept)}
+                    ${infoRow("আইডি নং", s.id)}
+                    ${infoRow("রক্তের গ্রুপ", s.blood)}
+                    ${infoRow("মোবাইল নং", s.mobile)}
+                </div>
+                <div class="action-footer">
+                    <button class="btn btn-edit" onclick="window.edit('${s.id}')"><i data-lucide="edit"></i> এডিট</button>
+                    <button class="btn btn-del" onclick="window.handleDelete('${s.id}')"><i data-lucide="trash-2"></i> মুছুন</button>
+                </div>
+            `;
+            document.getElementById('detailModal').classList.add('show');
+            lucide.createIcons();
         };
 
-        window.deleteStudent = async (id) => {
-            if (!confirm(`আপনি কি নিশ্চিত যে আইডি: ${id} এর সকল তথ্য স্থায়ীভাবে মুছে ফেলতে চান?`)) return;
+        function infoRow(label, val) {
+            return `
+                <div class="info-card">
+                    <div>
+                        <div class="info-label">${label}</div>
+                        <div class="info-val">${val || 'N/A'}</div>
+                    </div>
+                    <button class="btn-copy" onclick="window.copy('${val}')" title="কপি করুন"><i data-lucide="copy" size="16"></i></button>
+                </div>
+            `;
+        }
+
+        window.copy = (t) => {
+            const el = document.createElement('textarea'); el.value = t;
+            document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            showToast("কপি করা হয়েছে!");
+        };
+
+        const compress = (file) => new Promise(res => {
+            const r = new FileReader(); r.readAsDataURL(file);
+            r.onload = (e) => {
+                const i = new Image(); i.src = e.target.result;
+                i.onload = () => {
+                    const c = document.createElement('canvas'); const max = 800;
+                    let w = i.width, h = i.height;
+                    if(w > max) { h *= max/w; w = max; }
+                    c.width = w; c.height = h;
+                    c.getContext('2d').drawImage(i,0,0,w,h);
+                    res(c.toDataURL('image/jpeg', 0.8));
+                }
+            }
+        });
+
+        document.getElementById('studentForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true; btn.textContent = "সেভ হচ্ছে...";
+            const id = document.getElementById('fId').value.trim().toUpperCase();
+            const isEdit = document.getElementById('editMode').value === "true";
+            
             try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-                showToast("তথ্য মুছে ফেলা হয়েছে।");
-                resetUI();
-            } catch (err) {
-                showToast("ডিলিট করতে সমস্যা হয়েছে।", true);
+                let photo = null, qr = null;
+                if(isEdit) { const old = students.find(x => x.id === id); photo = old.photo; qr = old.qr; }
+                const pf = document.getElementById('fPhoto').files[0];
+                const qf = document.getElementById('fQr').files[0];
+                if(pf) photo = await compress(pf);
+                if(qf) qr = await compress(qf);
+
+                await setDoc(doc(db, colPath, id), {
+                    id, name: document.getElementById('fName').value.trim(),
+                    father: document.getElementById('fFather').value.trim(),
+                    dept: document.getElementById('fDept').value.trim(),
+                    blood: document.getElementById('fBlood').value,
+                    mobile: document.getElementById('fMobile').value.trim(),
+                    photo, qr
+                });
+                showToast("সফলভাবে সেভ হয়েছে!");
+                window.closeModal('formModal');
+            } catch (err) { showToast("ত্রুটি হয়েছে!", true); }
+            finally { btn.disabled = false; btn.textContent = "তথ্য সেভ করুন"; }
+        };
+
+        window.openForm = () => {
+            document.getElementById('studentForm').reset();
+            document.getElementById('fId').disabled = false;
+            document.getElementById('editMode').value = "false";
+            document.getElementById('formTitle').textContent = "নতুন ছাত্র যোগ করুন";
+            document.getElementById('formModal').classList.add('show');
+        };
+
+        window.edit = (id) => {
+            window.closeModal('detailModal');
+            const s = students.find(x => x.id === id);
+            document.getElementById('fId').value = s.id; document.getElementById('fId').disabled = true;
+            document.getElementById('fName').value = s.name;
+            document.getElementById('fFather').value = s.father;
+            document.getElementById('fDept').value = s.dept;
+            document.getElementById('fBlood').value = s.blood;
+            document.getElementById('fMobile').value = s.mobile;
+            document.getElementById('editMode').value = "true";
+            document.getElementById('formTitle').textContent = "তথ্য এডিট করুন";
+            document.getElementById('formModal').classList.add('show');
+        };
+
+        window.handleDelete = async (id) => {
+            const target = students.find(s => s.id === id);
+            if(!target) return;
+            if(confirm(`আপনি কি নিশ্চিত যে ${target.name} (ID: ${id}) মুছে ফেলবেন?`)) {
+                try {
+                    await deleteDoc(doc(db, colPath, id));
+                    showToast("তথ্য মুছে ফেলা হয়েছে");
+                    window.closeModal('detailModal');
+                } catch (e) { showToast("ত্রুটি হয়েছে", true); }
             }
         };
 
-        window.downloadImg = (src, name) => {
-            const a = document.createElement('a');
-            a.href = src;
-            a.download = `${name}.jpg`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        };
+        window.closeModal = (id) => document.getElementById(id).classList.remove('show');
+        window.dl = (s, n) => { if(s) { const a = document.createElement('a'); a.href = s; a.download = n+'.jpg'; a.click(); } };
 
-        function resetUI() {
-            document.getElementById('msgEmpty').classList.remove('hidden');
-            document.getElementById('msgError').classList.add('hidden');
-            document.getElementById('msgLoading').classList.add('hidden');
-            document.getElementById('profileContainer').classList.add('hidden');
-            document.getElementById('searchInput').value = '';
-            currentStudentData = null;
+        function showToast(m) {
+            const t = document.getElementById('toast'); t.textContent = m;
+            t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
         }
 
+        document.getElementById('searchInput').oninput = (e) => {
+            const v = e.target.value.trim().toUpperCase();
+            render(students.filter(s => s.id.toUpperCase().includes(v) || s.name.includes(v)));
+        };
+
         document.getElementById('themeToggle').onclick = () => {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const target = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', target);
-            document.querySelector('#themeToggle i').setAttribute('data-lucide', target === 'dark' ? 'sun' : 'moon');
+            const h = document.documentElement; const isD = h.getAttribute('data-theme') === 'dark';
+            h.setAttribute('data-theme', isD ? 'light' : 'dark');
+            document.querySelector('#themeToggle i').setAttribute('data-lucide', isD ? 'moon' : 'sun');
             lucide.createIcons();
         };
 
     </script>
 </body>
 </html>
+
+```
