@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>জামিয়া ছাত্র ডাটাবেস</title>
+    <title>জামি‘আ ছাত্র ডাটাবেজ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -78,12 +78,12 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
         .modal.show { display: flex; }
-        .modal-content { background: var(--card); width: 100%; max-width: 500px; border-radius: 20px; padding: 1.5rem; position: relative; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--card); width: 100%; max-width: 550px; border-radius: 20px; padding: 1.5rem; position: relative; border: 1px solid var(--border); max-height: 95vh; overflow-y: auto; }
 
         .profile-header { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .photo-box { text-align: center; }
         .photo-box span { font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 5px; }
-        .img-wrap { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 2px solid var(--primary); overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .img-wrap { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 2px solid var(--primary); overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
         .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
         .info-grid { display: flex; flex-direction: column; gap: 8px; }
@@ -107,6 +107,27 @@
         .input { width: 100%; padding: 0.7rem; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.05); color: var(--text); outline: none; font-size: 0.9rem; }
         .input:focus { border-color: var(--primary); }
 
+        /* Drop Zone Styles */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(0,0,0,0.02);
+            position: relative;
+        }
+        .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: scale(1.02);
+        }
+        .drop-zone-text { font-size: 0.65rem; color: var(--text-dim); margin-top: 5px; display: block; }
+        .drop-zone-icon { color: var(--primary); opacity: 0.7; }
+        .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .preview-mini { margin-top: 8px; width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--border); display: none; margin-inline: auto; object-fit: cover; }
+
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px; transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 2000; font-size: 0.85rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -120,13 +141,13 @@
         
         .hidden { display: none !important; }
 
-        /* Responsive adjustments */
         @media (max-width: 480px) {
             header { padding: 0.8rem 3%; }
             .search-box { max-width: 150px; }
             .modal-content { padding: 1.2rem; border-radius: 15px; }
             .profile-header { gap: 8px; }
             .info-card { padding: 8px 10px; }
+            .drop-zone { padding: 10px 5px; }
         }
     </style>
 </head>
@@ -172,21 +193,25 @@
     <div id="formModal" class="modal" onclick="if(event.target==this) window.closeModal('formModal')">
         <div class="modal-content">
             <button class="close-modal" onclick="window.closeModal('formModal')"><i data-lucide="x" size="18"></i></button>
-            <h3 id="formTitle" style="margin-bottom: 1.2rem; font-size: 1.1rem;">নতুন ছাত্র যোগ করুন</h3>
+            <h3 id="formTitle" style="margin-bottom: 1.2rem; font-size: 1.1rem;">ছাত্রের তথ্য ফরম</h3>
             <form id="studentForm">
                 <input type="hidden" id="editMode" value="false">
+                
                 <div class="form-group">
                     <label>নাম*</label>
                     <input type="text" id="fName" class="input" required placeholder="ছাত্রের পূর্ণ নাম">
                 </div>
+                
                 <div class="form-group">
                     <label>পিতার নাম*</label>
                     <input type="text" id="fFather" class="input" required placeholder="পিতার নাম">
                 </div>
+                
                 <div class="form-group">
                     <label>বিভাগ*</label>
                     <input type="text" id="fDept" class="input" required placeholder="বিভাগের নাম">
                 </div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="form-group">
                         <label>আইডি নং*</label>
@@ -203,14 +228,35 @@
                         </select>
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label>মোবাইল নং*</label>
                     <input type="tel" id="fMobile" class="input" required placeholder="017xxxxxxxx">
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group"><label>ছাত্রের ছবি</label><input type="file" id="fPhoto" class="input" accept="image/*" style="font-size: 0.7rem; padding: 5px;"></div>
-                    <div class="form-group"><label>QR কোড</label><input type="file" id="fQr" class="input" accept="image/*" style="font-size: 0.7rem; padding: 5px;"></div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px;">
+                    <!-- Photo Drop Zone -->
+                    <div class="form-group">
+                        <label>ছাত্রের ছবি</label>
+                        <div class="drop-zone" id="dzPhoto">
+                            <i data-lucide="image" class="drop-zone-icon" size="20"></i>
+                            <span class="drop-zone-text">ড্রাগ করুন বা ক্লিক করুন</span>
+                            <input type="file" id="fPhoto" accept="image/*">
+                            <img id="prevPhoto" class="preview-mini">
+                        </div>
+                    </div>
+                    <!-- QR Drop Zone -->
+                    <div class="form-group">
+                        <label>QR কোড</label>
+                        <div class="drop-zone" id="dzQr">
+                            <i data-lucide="qr-code" class="drop-zone-icon" size="20"></i>
+                            <span class="drop-zone-text">ড্রাগ করুন বা ক্লিক করুন</span>
+                            <input type="file" id="fQr" accept="image/*">
+                            <img id="prevQr" class="preview-mini">
+                        </div>
+                    </div>
                 </div>
+
                 <button type="submit" id="saveBtn" class="btn btn-save">তথ্য সেভ করুন</button>
             </form>
         </div>
@@ -257,6 +303,56 @@
         }
         init();
 
+        // Drop Zone Handlers
+        const setupDropZone = (zoneId, inputId, previewId) => {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+
+            ['dragenter', 'dragover'].forEach(name => {
+                zone.addEventListener(name, e => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(name => {
+                zone.addEventListener(name, e => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                });
+            });
+
+            zone.addEventListener('drop', e => {
+                const files = e.dataTransfer.files;
+                if(files.length) {
+                    input.files = files;
+                    handlePreview(files[0], preview, zone);
+                }
+            });
+
+            input.addEventListener('change', () => {
+                if(input.files.length) {
+                    handlePreview(input.files[0], preview, zone);
+                }
+            });
+        };
+
+        const handlePreview = (file, imgEl, zoneEl) => {
+            if(!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                imgEl.src = e.target.result;
+                imgEl.style.display = 'block';
+                zoneEl.querySelector('.drop-zone-icon').style.display = 'none';
+                zoneEl.querySelector('.drop-zone-text').textContent = 'ফাইল রেডি';
+            };
+            reader.readAsDataURL(file);
+        };
+
+        setupDropZone('dzPhoto', 'fPhoto', 'prevPhoto');
+        setupDropZone('dzQr', 'fQr', 'prevQr');
+
         function render(list) {
             const container = document.getElementById('studentList');
             if(list.length === 0) {
@@ -275,7 +371,6 @@
             lucide.createIcons();
         }
 
-        // Details Logic
         window.viewStudent = (id) => {
             const s = students.find(x => x.id === id);
             if(!s) return;
@@ -322,7 +417,6 @@
             `;
         }
 
-        // Global Actions
         window.copy = (t) => {
             const el = document.createElement('textarea'); el.value = t;
             document.body.appendChild(el); el.select();
@@ -355,7 +449,11 @@
             
             try {
                 let photo = null, qr = null;
-                if(isEdit) { const old = students.find(x => x.id === id); photo = old.photo; qr = old.qr; }
+                if(isEdit) { 
+                    const old = students.find(x => x.id === id); 
+                    photo = old.photo; 
+                    qr = old.qr; 
+                }
                 const pf = document.getElementById('fPhoto').files[0];
                 const qf = document.getElementById('fQr').files[0];
                 if(pf) photo = await compress(pf);
@@ -375,19 +473,29 @@
             finally { btn.disabled = false; btn.textContent = "তথ্য সেভ করুন"; }
         };
 
-        // Window Helper Functions
         window.openForm = () => {
             document.getElementById('studentForm').reset();
+            resetDropZones();
             document.getElementById('fId').disabled = false;
             document.getElementById('editMode').value = "false";
             document.getElementById('formTitle').textContent = "নতুন ছাত্র যোগ করুন";
             document.getElementById('formModal').classList.add('show');
         };
 
+        const resetDropZones = () => {
+            ['dzPhoto', 'dzQr'].forEach(id => {
+                const dz = document.getElementById(id);
+                dz.querySelector('.preview-mini').style.display = 'none';
+                dz.querySelector('.drop-zone-icon').style.display = 'block';
+                dz.querySelector('.drop-zone-text').textContent = 'ড্রাগ করুন বা ক্লিক করুন';
+            });
+        };
+
         window.edit = (id) => {
             window.closeModal('detailModal');
             const s = students.find(x => x.id === id);
             if(!s) return;
+            resetDropZones();
             document.getElementById('fId').value = s.id; document.getElementById('fId').disabled = true;
             document.getElementById('fName').value = s.name;
             document.getElementById('fFather').value = s.father;
@@ -395,6 +503,18 @@
             document.getElementById('fBlood').value = s.blood;
             document.getElementById('fMobile').value = s.mobile;
             document.getElementById('editMode').value = "true";
+            
+            if(s.photo) {
+                const prev = document.getElementById('prevPhoto');
+                prev.src = s.photo; prev.style.display = 'block';
+                document.getElementById('dzPhoto').querySelector('.drop-zone-icon').style.display = 'none';
+            }
+            if(s.qr) {
+                const prev = document.getElementById('prevQr');
+                prev.src = s.qr; prev.style.display = 'block';
+                document.getElementById('dzQr').querySelector('.drop-zone-icon').style.display = 'none';
+            }
+
             document.getElementById('formTitle').textContent = "তথ্য এডিট করুন";
             document.getElementById('formModal').classList.add('show');
         };
@@ -415,15 +535,9 @@
         
         window.dl = (s, n) => { 
             if(s) { 
-                const a = document.createElement('a'); 
-                a.href = s; 
-                a.download = n + '.jpg'; 
-                document.body.appendChild(a);
-                a.click(); 
-                document.body.removeChild(a);
-            } else {
-                showToast("ছবি পাওয়া যায়নি");
-            }
+                const a = document.createElement('a'); a.href = s; a.download = n + '.jpg'; 
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            } else showToast("ছবি পাওয়া যায়নি");
         };
 
         function showToast(m) {
@@ -431,13 +545,11 @@
             t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // Search Filter
         document.getElementById('searchInput').oninput = (e) => {
             const v = e.target.value.trim().toUpperCase();
             render(students.filter(s => s.id.toUpperCase().includes(v) || s.name.includes(v)));
         };
 
-        // Theme Toggle
         document.getElementById('themeToggle').onclick = () => {
             const h = document.documentElement; 
             const isD = h.getAttribute('data-theme') === 'dark';
