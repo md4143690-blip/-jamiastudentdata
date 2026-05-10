@@ -45,7 +45,6 @@
         .search-area input:focus { border-color: var(--primary); }
         .search-area i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
 
-        /* Card Design */
         .profile-card { background: var(--card); border-radius: 1.5rem; padding: 2rem; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeInUp 0.4s ease-out; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -68,7 +67,6 @@
         .btn-del { background: var(--danger); color: white; margin-top: 1.5rem; width: 100%; padding: 0.8rem; font-size: 0.95rem; }
         .btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        /* Modal */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
         .modal.show { display: flex; }
         .modal-body { background: var(--card); width: 100%; max-width: 550px; border-radius: 20px; padding: 2rem; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); }
@@ -116,7 +114,6 @@
         <div id="profileContainer" class="hidden"></div>
     </main>
 
-    <!-- Form Modal -->
     <div class="modal" id="studentModal">
         <div class="modal-body">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -172,7 +169,6 @@
         import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        // Your New Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBuaUX20xEpopWvMQSEaxOqsHQwFs7y2SM",
             authDomain: "jamiastudentdata.firebaseapp.com",
@@ -186,24 +182,29 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        // Using a unique ID for this instance
         const appId = 'jamia-student-db';
 
         let user = null;
         lucide.createIcons();
 
-        // Auth FIRST (Rule 3)
+        // Improved Auth Logic
         async function initAuth() {
             try {
-                await signInAnonymously(auth);
+                const cred = await signInAnonymously(auth);
+                user = cred.user;
+                console.log("Authenticated as:", user.uid);
             } catch (err) {
                 console.error("Auth Error:", err);
+                showToast("অথেন্টিকেশন এরর! কনসোল চেক করুন।");
             }
         }
         initAuth();
-        onAuthStateChanged(auth, u => user = u);
 
-        // UI Helpers
+        onAuthStateChanged(auth, u => {
+            user = u;
+            if (u) console.log("User Logged In:", u.uid);
+        });
+
         window.toggleModal = (s) => document.getElementById('studentModal').classList.toggle('show', s);
         window.showToast = (m) => {
             const t = document.getElementById('toast');
@@ -211,7 +212,6 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         };
 
-        // Theme
         document.getElementById('themeToggle').onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
@@ -219,7 +219,6 @@
             lucide.createIcons();
         };
 
-        // Image Compression (Small size for stability)
         const compressImage = (file) => new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -240,7 +239,6 @@
             };
         });
 
-        // File Selection Previews
         const setupFilePrev = (id, prev) => {
             document.getElementById(id).onchange = async (e) => {
                 if (e.target.files[0]) {
@@ -252,10 +250,12 @@
         setupFilePrev('fPhoto', 'pPhoto');
         setupFilePrev('fQr', 'pQr');
 
-        // SAVE DATA
         document.getElementById('studentForm').onsubmit = async (e) => {
             e.preventDefault();
-            if (!user) return showToast("সার্ভার কানেক্ট হচ্ছে, আবার চেষ্টা করুন...");
+            if (!user) {
+                await initAuth();
+                if (!user) return showToast("সার্ভার কানেক্ট করা যাচ্ছে না। অনুগ্রহ করে ফায়ারবেসে Anonymous Auth চালু করুন।");
+            }
             
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.textContent = "সেভিং...";
@@ -276,7 +276,6 @@
                     ts: Date.now()
                 };
 
-                // Path Rule 1 compliance
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), studentData);
                 showToast("ছাত্রের তথ্য সফলভাবে সেভ হয়েছে!");
                 toggleModal(false);
@@ -285,14 +284,13 @@
                 document.getElementById('pQr').innerHTML = '<i data-lucide="qr-code"></i>';
                 lucide.createIcons();
             } catch (err) {
-                showToast("এরর: তথ্য সেভ হয়নি। Rules চেক করুন।");
-                console.error(err);
+                showToast("সেভ এরর! ডাটাবেস রুলস চেক করুন।");
+                console.error("Firestore Save Error:", err);
             } finally {
                 btn.disabled = false; btn.textContent = "তথ্য সেভ করুন";
             }
         };
 
-        // SEARCH
         let searchTimer;
         document.getElementById('searchInput').oninput = (e) => {
             clearTimeout(searchTimer);
@@ -302,7 +300,9 @@
         };
 
         async function performSearch(id) {
+            if (!user) await initAuth();
             if (!user) return;
+
             document.getElementById('msgEmpty').classList.add('hidden');
             document.getElementById('msgError').classList.add('hidden');
             document.getElementById('msgLoading').classList.remove('hidden');
@@ -318,7 +318,7 @@
                     document.getElementById('msgError').classList.remove('hidden');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Fetch Error:", err);
                 showToast("সার্চ এরর!");
             }
         }
@@ -341,7 +341,6 @@
                                 <div class="info-tag"><span class="info-label">বিভাগ</span><span class="info-val">${s.dept}</span></div>
                                 <div class="info-tag" style="grid-column: 1/-1;"><span class="info-label">মোবাইল</span><span class="info-val">${s.mobile}</span></div>
                             </div>
-                            <!-- Single Click Delete Option -->
                             <button class="btn btn-del" onclick="deleteStudent('${s.id}')"><i data-lucide="trash-2"></i> প্রোফাইল ডিলিট করুন</button>
                         </div>
                         <div class="media-column">
@@ -368,7 +367,6 @@
             lucide.createIcons();
         }
 
-        // DELETE ACTION
         window.deleteStudent = async (id) => {
             if (!confirm(`আপনি কি নিশ্চিত যে আইডি: ${id} এর সকল তথ্য মুছে ফেলতে চান?`)) return;
             try {
@@ -378,7 +376,7 @@
                 resetUI();
             } catch (err) {
                 console.error(err);
-                showToast("ডিলিট করতে সমস্যা হয়েছে।");
+                showToast("ডিলিট এরর!");
             }
         };
 
@@ -404,7 +402,6 @@
             document.getElementById('msgError').classList.add('hidden');
             document.getElementById('profileContainer').classList.add('hidden');
         }
-
     </script>
 </body>
 </html>
