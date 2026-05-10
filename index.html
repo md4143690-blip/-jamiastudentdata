@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ছাত্র ব্যবস্থাপনা - প্রো ক্লাউড</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --primary: #6366f1;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        :root[data-theme="light"] {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: rgba(0, 0, 0, 0.1);
+            --text: #0f172a;
+            --text-dim: #64748b;
+            --primary: #4f46e5;
+            --danger: #dc2626;
+            --success: #059669;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Bengali', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; transition: 0.3s; }
+
+        header { padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.2rem; color: var(--primary); }
+
+        main { max-width: 850px; margin: 2rem auto; padding: 0 1rem; }
+
+        .search-area { position: relative; margin-bottom: 2rem; }
+        .search-area input { width: 100%; padding: 1rem 1rem 1rem 3rem; background: var(--card); border: 2px solid var(--border); border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; transition: 0.3s; }
+        .search-area input:focus { border-color: var(--primary); }
+        .search-area i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+
+        /* Card Design */
+        .profile-card { background: var(--card); border-radius: 1.5rem; padding: 2rem; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeInUp 0.4s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .grid-layout { grid-template-columns: 1.5fr 1fr; } }
+
+        .info-box { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+        .info-tag { background: rgba(0,0,0,0.05); padding: 0.8rem; border-radius: 10px; border: 1px solid var(--border); }
+        .info-label { font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 2px; }
+        .info-val { font-weight: 600; font-size: 0.95rem; }
+
+        .media-column { display: flex; flex-direction: column; gap: 1.5rem; }
+        .media-item { text-align: center; background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 15px; border: 1px solid var(--border); }
+        .media-frame { width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #fff; margin-bottom: 0.8rem; border: 2px solid var(--primary); position: relative; }
+        .media-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .action-btns { display: flex; gap: 8px; margin-top: 10px; }
+        .btn { flex: 1; padding: 0.6rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 5px; font-weight: 500; transition: 0.2s; }
+        .btn-copy { background: var(--primary); color: white; }
+        .btn-del { background: var(--danger); color: white; margin-top: 1.5rem; width: 100%; padding: 0.8rem; font-size: 0.95rem; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* Modal */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+        .modal.show { display: flex; }
+        .modal-body { background: var(--card); width: 100%; max-width: 550px; border-radius: 20px; padding: 2rem; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); }
+
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: var(--text-dim); }
+        .input-field { width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.1); color: var(--text); outline: none; }
+
+        .upload-area { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .preview-box { width: 100%; height: 80px; border: 2px dashed var(--border); border-radius: 8px; margin-top: 5px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.05); }
+        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #333; color: white; padding: 10px 25px; border-radius: 30px; transition: 0.4s; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        .status-msg { text-align: center; padding: 3rem; color: var(--text-dim); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><i data-lucide="shield-check"></i> এডুম্যানেজ প্রো</div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="toggleModal(true)" style="background: var(--primary); color:white; border:none; padding: 0.6rem 1.2rem; border-radius: 10px; cursor:pointer; font-weight: 500;">+ নতুন ছাত্র</button>
+            <button id="themeToggle" style="background:none; border: 1px solid var(--border); color:var(--text); width:40px; height:40px; border-radius:50%; cursor:pointer;"><i data-lucide="sun"></i></button>
+        </div>
+    </header>
+
+    <main>
+        <div class="search-area">
+            <i data-lucide="search"></i>
+            <input type="text" id="searchInput" placeholder="ছাত্রের আইডি দিয়ে সার্চ করুন (যেমন: S101)..." autocomplete="off">
+        </div>
+
+        <div id="statusContainer">
+            <div id="msgEmpty" class="status-msg">
+                <i data-lucide="database" style="width: 40px; height: 40px; margin-bottom: 10px; opacity: 0.3;"></i>
+                <p>আইডি লিখে সার্চ করুন অথবা নতুন ছাত্র যোগ করুন।</p>
+            </div>
+            <div id="msgLoading" class="status-msg hidden"><p>লোড হচ্ছে...</p></div>
+            <div id="msgError" class="status-msg hidden"><p style="color:var(--danger)">ছাত্রের তথ্য পাওয়া যায়নি!</p></div>
+        </div>
+
+        <div id="profileContainer" class="hidden"></div>
+    </main>
+
+    <!-- Form Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3>ছাত্রের তথ্য যোগ করুন</h3>
+                <button onclick="toggleModal(false)" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i data-lucide="x"></i></button>
+            </div>
+            <form id="studentForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label>আইডি নম্বর*</label>
+                        <input type="text" id="fId" class="input-field" required placeholder="S101">
+                    </div>
+                    <div class="input-group">
+                        <label>নাম*</label>
+                        <input type="text" id="fName" class="input-field" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>পিতার নাম*</label>
+                    <input type="text" id="fFather" class="input-field" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label>বিভাগ*</label>
+                        <input type="text" id="fDept" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label>মোবাইল নম্বর*</label>
+                        <input type="text" id="fMobile" class="input-field" required>
+                    </div>
+                </div>
+                <div class="upload-area">
+                    <div class="input-group">
+                        <label>ছবি আপলোড</label>
+                        <input type="file" id="fPhoto" class="input-field" accept="image/*">
+                        <div class="preview-box" id="pPhoto"><i data-lucide="image" style="opacity: 0.2;"></i></div>
+                    </div>
+                    <div class="input-group">
+                        <label>QR কোড আপলোড</label>
+                        <input type="file" id="fQr" class="input-field" accept="image/*">
+                        <div class="preview-box" id="pQr"><i data-lucide="qr-code" style="opacity: 0.2;"></i></div>
+                    </div>
+                </div>
+                <button type="submit" id="submitBtn" class="btn btn-copy" style="width: 100%; margin-top: 1.5rem; padding: 1rem;">তথ্য সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast">মেসেজ এখানে আসবে</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+        // Your New Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuaUX20xEpopWvMQSEaxOqsHQwFs7y2SM",
+            authDomain: "jamiastudentdata.firebaseapp.com",
+            projectId: "jamiastudentdata",
+            storageBucket: "jamiastudentdata.firebasestorage.app",
+            messagingSenderId: "197739340410",
+            appId: "1:197739340410:web:de12fd5f0d6162552ad1c3",
+            measurementId: "G-M3RQ4FQY8Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        // Using a unique ID for this instance
+        const appId = 'jamia-student-db';
+
+        let user = null;
+        lucide.createIcons();
+
+        // Auth FIRST (Rule 3)
+        async function initAuth() {
+            try {
+                await signInAnonymously(auth);
+            } catch (err) {
+                console.error("Auth Error:", err);
+            }
+        }
+        initAuth();
+        onAuthStateChanged(auth, u => user = u);
+
+        // UI Helpers
+        window.toggleModal = (s) => document.getElementById('studentModal').classList.toggle('show', s);
+        window.showToast = (m) => {
+            const t = document.getElementById('toast');
+            t.textContent = m; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        };
+
+        // Theme
+        document.getElementById('themeToggle').onclick = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.querySelector('#themeToggle i').setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+            lucide.createIcons();
+        };
+
+        // Image Compression (Small size for stability)
+        const compressImage = (file) => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+            };
+        });
+
+        // File Selection Previews
+        const setupFilePrev = (id, prev) => {
+            document.getElementById(id).onchange = async (e) => {
+                if (e.target.files[0]) {
+                    const base64 = await compressImage(e.target.files[0]);
+                    document.getElementById(prev).innerHTML = `<img src="${base64}">`;
+                }
+            };
+        };
+        setupFilePrev('fPhoto', 'pPhoto');
+        setupFilePrev('fQr', 'pQr');
+
+        // SAVE DATA
+        document.getElementById('studentForm').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!user) return showToast("সার্ভার কানেক্ট হচ্ছে, আবার চেষ্টা করুন...");
+            
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true; btn.textContent = "সেভিং...";
+
+            const id = document.getElementById('fId').value.trim().toUpperCase();
+            const photoFile = document.getElementById('fPhoto').files[0];
+            const qrFile = document.getElementById('fQr').files[0];
+
+            try {
+                const studentData = {
+                    id, 
+                    name: document.getElementById('fName').value.trim(),
+                    father: document.getElementById('fFather').value.trim(),
+                    dept: document.getElementById('fDept').value.trim(),
+                    mobile: document.getElementById('fMobile').value.trim(),
+                    photo: photoFile ? await compressImage(photoFile) : null,
+                    qr: qrFile ? await compressImage(qrFile) : null,
+                    ts: Date.now()
+                };
+
+                // Path Rule 1 compliance
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), studentData);
+                showToast("ছাত্রের তথ্য সফলভাবে সেভ হয়েছে!");
+                toggleModal(false);
+                document.getElementById('studentForm').reset();
+                document.getElementById('pPhoto').innerHTML = '<i data-lucide="image"></i>';
+                document.getElementById('pQr').innerHTML = '<i data-lucide="qr-code"></i>';
+                lucide.createIcons();
+            } catch (err) {
+                showToast("এরর: তথ্য সেভ হয়নি। Rules চেক করুন।");
+                console.error(err);
+            } finally {
+                btn.disabled = false; btn.textContent = "তথ্য সেভ করুন";
+            }
+        };
+
+        // SEARCH
+        let searchTimer;
+        document.getElementById('searchInput').oninput = (e) => {
+            clearTimeout(searchTimer);
+            const val = e.target.value.trim().toUpperCase();
+            if (!val) { resetUI(); return; }
+            searchTimer = setTimeout(() => performSearch(val), 600);
+        };
+
+        async function performSearch(id) {
+            if (!user) return;
+            document.getElementById('msgEmpty').classList.add('hidden');
+            document.getElementById('msgError').classList.add('hidden');
+            document.getElementById('msgLoading').classList.remove('hidden');
+            document.getElementById('profileContainer').classList.add('hidden');
+
+            try {
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
+                document.getElementById('msgLoading').classList.add('hidden');
+                
+                if (snap.exists()) {
+                    renderProfile(snap.data());
+                } else {
+                    document.getElementById('msgError').classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("সার্চ এরর!");
+            }
+        }
+
+        function renderProfile(s) {
+            const container = document.getElementById('profileContainer');
+            container.classList.remove('hidden');
+            const photo = s.photo || `https://api.dicebear.com/7.x/initials/svg?seed=${s.name}`;
+            const qr = s.qr || 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Invalid';
+
+            container.innerHTML = `
+                <div class="profile-card">
+                    <div class="grid-layout">
+                        <div>
+                            <h2 style="color:var(--primary); margin-bottom:10px;">ছাত্র প্রোফাইল</h2>
+                            <div class="info-box">
+                                <div class="info-tag"><span class="info-label">ছাত্রের নাম</span><span class="info-val">${s.name}</span></div>
+                                <div class="info-tag"><span class="info-label">আইডি নম্বর</span><span class="info-val">${s.id}</span></div>
+                                <div class="info-tag"><span class="info-label">পিতার নাম</span><span class="info-val">${s.father}</span></div>
+                                <div class="info-tag"><span class="info-label">বিভাগ</span><span class="info-val">${s.dept}</span></div>
+                                <div class="info-tag" style="grid-column: 1/-1;"><span class="info-label">মোবাইল</span><span class="info-val">${s.mobile}</span></div>
+                            </div>
+                            <!-- Single Click Delete Option -->
+                            <button class="btn btn-del" onclick="deleteStudent('${s.id}')"><i data-lucide="trash-2"></i> প্রোফাইল ডিলিট করুন</button>
+                        </div>
+                        <div class="media-column">
+                            <div class="media-item">
+                                <span class="info-label">ছাত্রের ছবি</span>
+                                <div class="media-frame"><img src="${photo}"></div>
+                                <div class="action-btns">
+                                    <button class="btn btn-copy" onclick="copyLink('${photo}')">লিঙ্ক</button>
+                                    <button class="btn btn-copy" style="background:#555" onclick="downloadImg('${photo}', '${s.id}_photo')">ডাউনলোড</button>
+                                </div>
+                            </div>
+                            <div class="media-item">
+                                <span class="info-label">কিউআর কোড</span>
+                                <div class="media-frame" style="padding:10px;"><img src="${qr}" style="object-fit:contain"></div>
+                                <div class="action-btns">
+                                    <button class="btn btn-copy" onclick="copyLink('${qr}')">লিঙ্ক</button>
+                                    <button class="btn btn-copy" style="background:#555" onclick="downloadImg('${qr}', '${s.id}_qr')">ডাউনলোড</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // DELETE ACTION
+        window.deleteStudent = async (id) => {
+            if (!confirm(`আপনি কি নিশ্চিত যে আইডি: ${id} এর সকল তথ্য মুছে ফেলতে চান?`)) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
+                showToast("তথ্য মুছে ফেলা হয়েছে।");
+                document.getElementById('searchInput').value = '';
+                resetUI();
+            } catch (err) {
+                console.error(err);
+                showToast("ডিলিট করতে সমস্যা হয়েছে।");
+            }
+        };
+
+        window.copyLink = (l) => {
+            const temp = document.createElement('input');
+            temp.value = l;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast("লিঙ্ক কপি করা হয়েছে!");
+        };
+
+        window.downloadImg = (src, name) => {
+            const a = document.createElement('a');
+            a.href = src; a.download = `${name}.jpg`;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
+        };
+
+        function resetUI() {
+            document.getElementById('msgEmpty').classList.remove('hidden');
+            document.getElementById('msgError').classList.add('hidden');
+            document.getElementById('profileContainer').classList.add('hidden');
+        }
+
+    </script>
+</body>
+</html>
